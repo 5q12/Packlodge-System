@@ -1,0 +1,42 @@
+#--This is a list of all available permissions--
+
+  #pssu.seen allows access to all commands that start with /seen
+    pssu.seen
+  #pssu.playtime allows access to all commands that start with /playtime
+    pssu.playtime
+  #pssu.dev allows access to all commands that start with /psd
+    pssu.dev
+  #pssu.location allows access to all commands that start with /location
+    pssu.location
+  #pssu.modpack allows access to all commands that start with /modpack
+    pssu.modpack
+
+#--This is a list of all available commands--
+
+  #playtime
+    /playtime #displays player playtime.
+    /playtime {player} #displays specified player's playtime.
+    /playtime top #displays top 10 players playtime.
+      #sub-commands for playtime
+        -h #displays playtime in hours usage /playtime -h, /playtime {player} -h, /playtime top -h
+        -m #displays playtime in minutes usage /playtime -m, /playtime {player} -m, /playtime top -m
+        -s #displays playtime in seconds usage /playtime -s, /playtime {player} -s, /playtime top -s
+    
+  #seen
+    /seen {player} #displays when specified player was last online
+
+  #location
+    /location save {location-name} #saves your coordinates to your location list with specified name.
+    /location del {location-name} #deletes the the location with specified name from your location list.
+    /location rename {location-name} {new-location-name} #changes the name of the specified location to the new specified location name.
+    /location list #list's all your locations
+
+  #modpack
+    /modpack #outputs a green clickable text in chat that when clicked opens the modpack download link.
+
+  #psd
+    /psd modpack {link} #changes the modpack download link in the config.yml.
+    /psd location {player} list #list of specified player locations
+    /psd location {player} del {location-name} #deletes specified location of specified player
+    /psd location {player} save {location-name} #saves player sender's location to specified player locations
+    /psd location {player} rename {location-name} {new-location-name} #renames specified player location
