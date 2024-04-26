@@ -7,7 +7,7 @@
 
 	<groupId>app.ccls</groupId>
 	<artifactId>packlodge-system</artifactId>
-	<version>0.0.1b</version>
+	<version>0.0.2b</version>
   <packaging>jar</packaging>
 
   <name>Packlodge System</name>
