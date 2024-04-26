@@ -35,8 +35,12 @@
     /modpack #outputs a green clickable text in chat that when clicked opens the modpack download link.
 
   #psd
-    /psd modpack {link} #changes the modpack download link in the config.yml.
-    /psd location {player} list #list of specified player locations
-    /psd location {player} del {location-name} #deletes specified location of specified player
-    /psd location {player} save {location-name} #saves player sender's location to specified player locations
-    /psd location {player} rename {location-name} {new-location-name} #renames specified player location
+    #psd modpack
+      /psd modpack {link} #changes the modpack download link in the config.yml.
+      /psd modpack enable #enables the usage of the /modpack command.
+      /psd modpack disable #disables the usage of the /modpack command.
+    #psd location
+      /psd location {player} list #list of specified player locations
+      /psd location {player} del {location-name} #deletes specified location of specified player
+      /psd location {player} save {location-name} #saves player sender's location to specified player locations
+      /psd location {player} rename {location-name} {new-location-name} #renames specified player location

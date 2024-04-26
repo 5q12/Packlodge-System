@@ -2,3 +2,5 @@
 
 # specify the download link to the modpack
 modpack-link: https://modpack.example.net
+# choose to enable or disable the usage of modpack command with false|true
+modpack-command: false
