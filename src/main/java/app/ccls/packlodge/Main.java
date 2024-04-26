@@ -29,6 +29,7 @@ public final class Main extends JavaPlugin {
     private File playerDataFile;
     private HashMap<UUID, Long> playTimeMap;
     private LocationCommands locationCommands; // Add this field
+    private ModpackCommand modpackCommand;
 
     @Override
     public void onEnable() {
@@ -42,7 +43,7 @@ public final class Main extends JavaPlugin {
         saveResource("permissions-and-commands.yml", false);
         getLogger().info("permissions-and-commands.yml created or overwritten successfully.");
         
-
+        ModpackCommand modpackCommand = new ModpackCommand(this);
         // Create plugin folder if it doesn't exist
         File pluginFolder = getDataFolder();
         if (!pluginFolder.exists()) {
@@ -76,7 +77,7 @@ public final class Main extends JavaPlugin {
         // Register the /playtime command
         getCommand("modpack").setExecutor(new ModpackCommand(this));
         // Registering the PSDCommand command executor
-        getCommand("psd").setExecutor(new PSDCommand(this));
+        getCommand("psd").setExecutor(new PSDCommand(this, modpackCommand));
 
     }
 

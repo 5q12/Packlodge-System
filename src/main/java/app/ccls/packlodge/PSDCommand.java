@@ -9,9 +9,11 @@ import org.bukkit.entity.Player;
 public class PSDCommand implements CommandExecutor {
 
     private final Main main;
+    private final ModpackCommand modpackCommand;
 
-    public PSDCommand(Main main) {
+    public PSDCommand(Main main, ModpackCommand modpackCommand) {
         this.main = main;
+        this.modpackCommand = modpackCommand;
     }
 
     @Override
@@ -24,6 +26,7 @@ public class PSDCommand implements CommandExecutor {
         if (command.getName().equalsIgnoreCase("psd")) {
             if (args.length >= 2) {
                 if (args[0].equalsIgnoreCase("location")) {
+                    // location command implementation...
                     if (args.length == 4 && args[2].equalsIgnoreCase("save")) {
                         Player targetPlayer = Bukkit.getPlayer(args[1]);
                         if (targetPlayer == null) {
@@ -67,20 +70,20 @@ public class PSDCommand implements CommandExecutor {
                         return true;
                     }
                 } else if (args[0].equalsIgnoreCase("modpack")) {
-                    String modpackLink = String.join(" ", args[1]);
-                    updateModpackLink(modpackLink);
-                    sender.sendMessage("Modpack link updated to: " + modpackLink);
-                    return true;
+                    if (args[1].equalsIgnoreCase("enable")) {
+                        modpackCommand.enableModpackCommand();
+                        sender.sendMessage("The /modpack command has been enabled.");
+                        return true;
+                    } else if (args[1].equalsIgnoreCase("disable")) {
+                        modpackCommand.disableModpackCommand();
+                        sender.sendMessage("The /modpack command has been disabled.");
+                        return true;
+                    }
                 }
             }
-            sender.sendMessage("Usage: /psd modpack <link> or /psd location <player> [save <location-name>|rename <old-name> <new-name>|list|del <location-name>]");
+            sender.sendMessage("Usage: /psd modpack <enable|disable> or /psd location <player> [save <location-name>|rename <old-name> <new-name>|list|del <location-name>]");
             return true;
         }
         return false;
-    }
-
-    private void updateModpackLink(String modpackLink) {
-        main.getConfig().set("modpack-link", modpackLink);
-        main.saveConfig();
     }
 }
