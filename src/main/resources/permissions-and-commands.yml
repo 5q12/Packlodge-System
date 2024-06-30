@@ -12,6 +12,8 @@
     pssu.location
   #pssu.modpack allows access to all commands that start with /modpack
     pssu.modpack
+  #pssu.dev.get allows acces to all commands that start with /psget
+    pssu.dev.get
 
 #--This is a list of all available commands--
 
