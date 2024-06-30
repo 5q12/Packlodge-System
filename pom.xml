@@ -7,7 +7,7 @@
 
 	<groupId>app.ccls</groupId>
 	<artifactId>packlodge-system</artifactId>
-	<version>0.0.3b</version>
+	<version>0.0.4b</version>
   <packaging>jar</packaging>
 
   <name>Packlodge System</name>
@@ -16,7 +16,7 @@
     <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-    <url>https://5q12.ccls.icu</url>
+    <url>https://5q12.ccls.icu/packlodge/</url>
 
     <build>
     <plugins>

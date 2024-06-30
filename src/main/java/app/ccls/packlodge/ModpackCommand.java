@@ -20,14 +20,12 @@ public class ModpackCommand implements CommandExecutor {
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        // Check if the command is enabled
         if (!isModpackCommandEnabled()) {
             sender.sendMessage("The /modpack command is currently disabled.");
-            return true; // Return here if the command is disabled
+            return true;
         }
         
         if (command.getName().equalsIgnoreCase("modpack")) {
-            // Check for permission
             if (!sender.hasPermission("pssu.modpack")) {
                 sender.sendMessage("You don't have permission to use this command.");
                 return true;
@@ -50,18 +48,15 @@ public class ModpackCommand implements CommandExecutor {
         return false;
     }
 
-    // Method to check if the /modpack command is enabled
     private boolean isModpackCommandEnabled() {
         return plugin.getConfig().getBoolean("modpack-command", true);
     }
 
-    // Method to enable the /modpack command
     public void enableModpackCommand() {
         plugin.getConfig().set("modpack-command", true);
         plugin.saveConfig();
     }
 
-    // Method to disable the /modpack command
     public void disableModpackCommand() {
         plugin.getConfig().set("modpack-command", false);
         plugin.saveConfig();

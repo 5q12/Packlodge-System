@@ -56,13 +56,11 @@ public class PlayTime implements CommandExecutor {
             }
         }
 
-        // Remove the options from args
         args = Arrays.stream(args)
                 .filter(arg -> !arg.equalsIgnoreCase("-h") && !arg.equalsIgnoreCase("-m") && !arg.equalsIgnoreCase("-s"))
                 .toArray(String[]::new);
 
         if (args.length == 0) {
-            // No argument provided, show sender's playtime
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 showPlayTime(player.getUniqueId(), sender, hoursOnly, minutesOnly, secondsOnly);
@@ -71,10 +69,8 @@ public class PlayTime implements CommandExecutor {
             }
         } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("top")) {
-                // Show top 10 players by playtime
                 showTopPlayTimes(sender, hoursOnly, minutesOnly, secondsOnly);
             } else {
-                // Show playtime of the specified player
                 String targetUsername = args[0];
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetUsername);
                 if (offlinePlayer.hasPlayedBefore()) {
@@ -95,20 +91,20 @@ public class PlayTime implements CommandExecutor {
         if (offlinePlayer != null && playTimes.containsKey(playerUUID)) {
             long playTime = playTimes.get(playerUUID);
             if (hoursOnly) {
-                long hours = playTime / 3600; // Convert playtime to hours
+                long hours = playTime / 3600;
                 sender.sendMessage("Player: " + offlinePlayer.getName());
                 sender.sendMessage("Hours: " + hours);
             } else if (minutesOnly) {
-                long minutes = playTime / 60; // Convert playtime to minutes
+                long minutes = playTime / 60;
                 sender.sendMessage("Player: " + offlinePlayer.getName());
                 sender.sendMessage("Minutes: " + minutes);
             } else if (secondsOnly) {
                 sender.sendMessage("Player: " + offlinePlayer.getName());
                 sender.sendMessage("Seconds: " + playTime);
             } else {
-                long days = playTime / 86400; // Seconds in a day
-                long hours = (playTime % 86400) / 3600; // Seconds in an hour
-                long minutes = (playTime % 3600) / 60; // Seconds in a minute
+                long days = playTime / 86400;
+                long hours = (playTime % 86400) / 3600;
+                long minutes = (playTime % 3600) / 60;
                 long seconds = playTime % 60;
 
                 sender.sendMessage("Player: " + offlinePlayer.getName());
@@ -125,7 +121,6 @@ public class PlayTime implements CommandExecutor {
     private void showTopPlayTimes(CommandSender sender, boolean hoursOnly, boolean minutesOnly, boolean secondsOnly) {
         sender.sendMessage("Top 10 players playtime:");
 
-        // Sort players by playtime in descending order
         Map<UUID, Long> sortedPlayTimes = playTimes.entrySet()
                 .stream()
                 .sorted(Map.Entry.<UUID, Long>comparingByValue().reversed())
@@ -137,10 +132,10 @@ public class PlayTime implements CommandExecutor {
             UUID playerUUID = entry.getKey();
             long playTime = entry.getValue();
             if (hoursOnly) {
-                long hours = playTime / 3600; // Convert playtime to hours
+                long hours = playTime / 3600;
                 sender.sendMessage(rank + ". " + Bukkit.getOfflinePlayer(playerUUID).getName() + ": " + hours + " hours");
             } else if (minutesOnly) {
-                long minutes = playTime / 60; // Convert playtime to minutes
+                long minutes = playTime / 60;
                 sender.sendMessage(rank + ". " + Bukkit.getOfflinePlayer(playerUUID).getName() + ": " + minutes + " minutes");
             } else if (secondsOnly) {
                 sender.sendMessage(rank + ". " + Bukkit.getOfflinePlayer(playerUUID).getName() + ": " + playTime + " seconds");
@@ -181,7 +176,6 @@ public class PlayTime implements CommandExecutor {
                 long lastPlayTime = playTimes.getOrDefault(playerUUID, 0L) + 1;
                 playTimes.put(playerUUID, lastPlayTime);
 
-                // Save playtime to individual player file
                 File playerFile = new File(playtimeDataFolder, playerUUID.toString() + ".yml");
                 FileConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
                 playerConfig.set("playtime", lastPlayTime);
@@ -191,7 +185,7 @@ public class PlayTime implements CommandExecutor {
                     e.printStackTrace();
                 }
             }
-        }, 0, 20); // 20 ticks = 1 second
+        }, 0, 20);
     }
     static long getPlaytime(UUID playerUUID) {
         return playTimes.getOrDefault(playerUUID, 0L);

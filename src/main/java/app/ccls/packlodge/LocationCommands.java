@@ -25,7 +25,6 @@ public class LocationCommands implements CommandExecutor {
         }
         this.playerData = new HashMap<>();
 
-        // Load playtime and location data for each player
         loadPlayerData();
     }
 
@@ -39,16 +38,13 @@ public class LocationCommands implements CommandExecutor {
         Player player = (Player) sender;
         UUID playerUUID = player.getUniqueId();
 
-        // Check for permission
         if (!player.hasPermission("pssu.location")) {
             player.sendMessage("You don't have permission to use this command.");
             return true;
         }
 
         if (command.getName().equalsIgnoreCase("location")) {
-            // Handling of location-related commands goes here
             if (args.length == 0) {
-                // If no arguments provided, show usage
                 player.sendMessage("Usage: /location save <name>, /location list, /location del <name>, /location rename <name> <new-name>");
                 return true;
             }
@@ -114,7 +110,6 @@ public class LocationCommands implements CommandExecutor {
     }
     
     void saveLocation(UUID playerUUID, String name, org.bukkit.Location location) {
-        // Fetch playtime for the player from the PlayTime class
         long playtime = PlayTime.getPlaytime(playerUUID);
     
         YamlConfiguration playerConfig = playerData.computeIfAbsent(playerUUID, k -> new YamlConfiguration());
@@ -122,10 +117,8 @@ public class LocationCommands implements CommandExecutor {
         if (locationsSection == null) {
             locationsSection = playerConfig.createSection("locations");
         }
-        // Ensure playtime is set before saving location data
         playerConfig.set("player", Bukkit.getPlayer(playerUUID).getName());
         playerConfig.set("playtime", playtime);
-        // Set location data starting from the second line
         locationsSection.set(name, formatLocation(location));
         savePlayerData(playerUUID);
         Player player = Bukkit.getPlayer(playerUUID);
@@ -157,10 +150,8 @@ public class LocationCommands implements CommandExecutor {
             if (locationsSection != null && locationsSection.contains(name)) {
                 locationsSection.set(name, null);
                 savePlayerData(playerUUID);
-                // Inform the sender that the location has been deleted
                 sender.sendMessage("Location '" + name + "' has been successfully deleted.");
             } else {
-                // Inform the sender that the location does not exist
                 sender.sendMessage("Location '" + name + "' does not exist.");
             }
         }
@@ -183,10 +174,8 @@ public class LocationCommands implements CommandExecutor {
                 locationsSection.set(name, null);
                 locationsSection.set(newName, location);
                 savePlayerData(playerUUID);
-                // Inform the sender that the location has been renamed
                 sender.sendMessage("Location '" + name + "' has been successfully renamed to '" + newName + "'.");
             } else {
-                // Inform the sender that the location does not exist
                 sender.sendMessage("Location '" + name + "' does not exist.");
             }
         }

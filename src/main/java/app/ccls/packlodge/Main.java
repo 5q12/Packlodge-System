@@ -16,41 +16,39 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.UUID;
 
-
 public final class Main extends JavaPlugin {
 
     private FileConfiguration playerDataConfig;
     private File playerDataFile;
     private HashMap<UUID, Long> playTimeMap;
-    private LocationCommands locationCommands; // Add this field
+    private LocationCommands locationCommands;
     private ModpackCommand modpackCommand;
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
         System.out.println("Packlodge System Loaded Successfully");
+        this.getCommand("psget").setExecutor(new PSDUpdate(this));
         saveDefaultConfig();
 
-        // permission-and-commands.yml creation and deletion process logic
         File file = new File(getDataFolder(), "permissions-and-commands.yml");
         if (file.exists()) file.delete();
         saveResource("permissions-and-commands.yml", false);
         getLogger().info("permissions-and-commands.yml created or overwritten successfully.");
-        
-        ModpackCommand modpackCommand = new ModpackCommand(this);
-        // Create plugin folder if it doesn't exist
+
+        modpackCommand = new ModpackCommand(this);
         File pluginFolder = getDataFolder();
         if (!pluginFolder.exists()) {
             pluginFolder.mkdirs();
         }
 
-        // Initialize player data file and configuration
         playerDataFile = new File(pluginFolder, "players.yml");
         if (!playerDataFile.exists()) {
             try {
@@ -65,60 +63,70 @@ public final class Main extends JavaPlugin {
 
         playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
 
-        // Register event listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-        // Register the /location command
-        locationCommands = new LocationCommands(this); // Initialize LocationCommands
+        locationCommands = new LocationCommands(this);
         getCommand("location").setExecutor(locationCommands);
-        // Register the /seen command
         getCommand("seen").setExecutor(new SeenCommand());
-        // Register the /playtime command
         getCommand("playtime").setExecutor(new PlayTime(this));
-        // Register the /playtime command
-        getCommand("modpack").setExecutor(new ModpackCommand(this));
-        // Registering the PSDCommand command executor
+        getCommand("modpack").setExecutor(modpackCommand);
         getCommand("psd").setExecutor(new PSDCommand(this, modpackCommand));
 
+        copyUpgradeScript();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
         System.out.println("Packlodge System Successfully Shutdown");
-    
     }
 
-    // Add this method to provide access to LocationCommands instance
     public LocationCommands getLocationCommands() {
         return locationCommands;
-    
     }
+    private void copyUpgradeScript() {
+        File serverHomeDir = getDataFolder().getParentFile().getParentFile();
+        File scriptFolder = new File(serverHomeDir, "scripts");
+        if (!scriptFolder.exists()) {
+            scriptFolder.mkdirs();
+        }
+    
+        String scriptName = System.getProperty("os.name").toLowerCase().contains("win") ? "upgrade.bat" : "upgrade.sh";
+        File scriptFile = new File(scriptFolder, scriptName);
+    
+        if (!scriptFile.exists()) {
+            try (InputStream in = getResource(scriptName)) {
+                if (in != null) {
+                    Files.copy(in, scriptFile.toPath());
+                    scriptFile.setExecutable(true);
+                } else {
+                    getLogger().severe("Script resource not found: " + scriptName);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }    
+
     private class SeenCommand implements org.bukkit.command.CommandExecutor {
         @Override
         public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-            // Check if the sender has the required permission
             if (!sender.hasPermission("pssu.seen")) {
                 sender.sendMessage("§cYou don't have permission to execute this command.");
                 return true;
             }
 
-            // Check if the command has the correct number of arguments
             if (args.length != 1) {
                 sender.sendMessage("Usage: /seen <username>");
                 return true;
             }
 
-            // Concatenate arguments into username in case username contains spaces
             String targetUsername = String.join(" ", args);
 
-            // Check if the player is online
             Player targetPlayer = Bukkit.getPlayer(targetUsername);
             if (targetPlayer != null && targetPlayer.isOnline()) {
                 sender.sendMessage("Player: " + targetUsername + " is currently online.");
                 return true;
             }
 
-            // Find player in the data file
             ConfigurationSection playersSection = playerDataConfig.getConfigurationSection("players");
             if (playersSection == null) {
                 sender.sendMessage("No player data found.");
@@ -140,6 +148,7 @@ public final class Main extends JavaPlugin {
             return true;
         }
     }
+
     private class PlayerListener implements Listener {
         @EventHandler
         public void onPlayerJoin(PlayerJoinEvent event) {
@@ -149,13 +158,10 @@ public final class Main extends JavaPlugin {
             long currentTimeMillis = System.currentTimeMillis();
             Location playerLocation = player.getLocation();
 
-            // Get player's IP address
             String ip = getIpAddress(player);
 
-            // Initialize playtime for the player
             playTimeMap.put(playerUUID, 0L);
 
-            // Update player data
             updatePlayerData(playerUUID, playerName, currentTimeMillis, ip, playerLocation);
         }
 
@@ -164,7 +170,6 @@ public final class Main extends JavaPlugin {
             Player player = event.getPlayer();
             UUID playerUUID = player.getUniqueId();
 
-            // Save playtime to file when player quits
             savePlayTime(playerUUID);
         }
 
@@ -174,7 +179,6 @@ public final class Main extends JavaPlugin {
             playerSection.set("seconds", playTime);
             saveConfig();
         }
-
 
         private String getIpAddress(Player player) {
             String ip = player.getAddress().getAddress().getHostAddress();
@@ -196,6 +200,7 @@ public final class Main extends JavaPlugin {
             savePlayerDataConfig();
         }
     }
+
     private void savePlayerDataConfig() {
         try {
             playerDataConfig.save(playerDataFile);
@@ -204,4 +209,3 @@ public final class Main extends JavaPlugin {
         }
     }
 }
-

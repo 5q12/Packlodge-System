@@ -1,3 +1,5 @@
+#--v0.0.4-b
+
 #--This is a list of all available permissions--
 
   #pssu.seen allows access to all commands that start with /seen
@@ -44,3 +46,7 @@
       /psd location {player} del {location-name} #deletes specified location of specified player
       /psd location {player} save {location-name} #saves player sender's location to specified player locations
       /psd location {player} rename {location-name} {new-location-name} #renames specified player location
+  
+  #psget
+    /psget update #downloads the latest plugin version.
+    /psget upgrade #this stops the server and deletes the old plugin version (server needs to be started manually after command has run).

@@ -26,7 +26,6 @@ public class PSDCommand implements CommandExecutor {
         if (command.getName().equalsIgnoreCase("psd")) {
             if (args.length >= 2) {
                 if (args[0].equalsIgnoreCase("location")) {
-                    // location command implementation...
                     if (args.length == 4 && args[2].equalsIgnoreCase("save")) {
                         Player targetPlayer = Bukkit.getPlayer(args[1]);
                         if (targetPlayer == null) {
@@ -51,7 +50,6 @@ public class PSDCommand implements CommandExecutor {
                             sender.sendMessage("Player not found.");
                             return true;
                         }
-                        // Execute location listing asynchronously
                         main.getServer().getScheduler().runTaskAsynchronously(main, () -> {
                             main.getLocationCommands().listLocations(targetPlayer.getUniqueId(), sender);
                         });
@@ -62,7 +60,6 @@ public class PSDCommand implements CommandExecutor {
                             sender.sendMessage("Player not found.");
                             return true;
                         }
-                        // Execute location deletion asynchronously
                         main.getServer().getScheduler().runTaskAsynchronously(main, () -> {
                             main.getLocationCommands().deleteLocation(targetPlayer.getUniqueId(), args[3], sender);
                             sender.sendMessage("Deleted location '" + args[3] + "' for player " + targetPlayer.getName());
