@@ -1,4 +1,4 @@
-#--v0.0.4-b
+#--v0.0.5-b
 
 #--This is a list of all available permissions--
 
@@ -12,6 +12,8 @@
     pssu.location
   #pssu.modpack allows access to all commands that start with /modpack
     pssu.modpack
+  #pssu.dev.get allows access to all commands that start with /psget
+    pssu.dev.get
 
 #--This is a list of all available commands--
 
@@ -38,7 +40,7 @@
 
   #psd
     #psd modpack
-      /psd modpack {link} #changes the modpack download link in the config.yml.
+      /psd modpack-link {link} #changes the modpack download link in the config.yml.
       /psd modpack enable #enables the usage of the /modpack command.
       /psd modpack disable #disables the usage of the /modpack command.
     #psd location
@@ -46,6 +48,17 @@
       /psd location {player} del {location-name} #deletes specified location of specified player
       /psd location {player} save {location-name} #saves player sender's location to specified player locations
       /psd location {player} rename {location-name} {new-location-name} #renames specified player location
+    #psd web-server
+      /psd web-server enable #enables the activation and startup of the integrated web-server.
+      /psd web-server disable #disables the activation and startup of the integrated web-server.
+      /psd web-server url {url} #set the link that will be used for all in game web-server related commands. (not the actual ip that the web-server is hosted on that is controlled by the host server)
+      /psd web-server access-port {port} # set the port that will be used when generating links in the chat useful if you are running a reverse-proxy. (leave the same if you have the same port locally and externally)
+      /psd web-server port {port} #set the port that your web-server will run on.
+    #psd {player}
+      /psd {player} locate #sends the specified player's in-game location.
+      /psd {player} ip #sends the specified player's ip address.
+      /psd {player} info #sends the specified player's in-game location and ip address.
+      /psd {player} info -print #creates a file on the web-server (if enabled) and sends a message to the command executor which they can click that opens a link directly to an auto generated {player}.txt containing in-game and real life geographical information.
   
   #psget
     /psget update #downloads the latest plugin version.

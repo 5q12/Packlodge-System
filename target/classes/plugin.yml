@@ -1,6 +1,6 @@
 name: packlodge-system
 main: app.ccls.packlodge.Main
-version: 0.0.4
+version: 0.0.5
 api-version: 1.21
 authors: [ 5q12 ]
 website: https://5q12.ccls.icu/packlodge

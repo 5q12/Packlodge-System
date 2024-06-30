@@ -26,6 +26,7 @@ import java.util.UUID;
 
 public final class Main extends JavaPlugin {
 
+    private HTTPServer httpServer;
     private FileConfiguration playerDataConfig;
     private File playerDataFile;
     private HashMap<UUID, Long> playTimeMap;
@@ -72,11 +73,23 @@ public final class Main extends JavaPlugin {
         getCommand("psd").setExecutor(new PSDCommand(this, modpackCommand));
 
         copyUpgradeScript();
+
+       if (getConfig().getBoolean("web-server", false)) {
+            try {
+                httpServer = new HTTPServer(this);
+                httpServer.startServer();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void onDisable() {
         System.out.println("Packlodge System Successfully Shutdown");
+        if (httpServer != null) {
+            httpServer.stopServer();
+        }
     }
 
     public LocationCommands getLocationCommands() {
