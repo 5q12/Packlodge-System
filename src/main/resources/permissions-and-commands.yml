@@ -1,4 +1,4 @@
-#--v0.0.5-b
+#--v1.0.0
 
 #--This is a list of all available permissions--
 
@@ -54,6 +54,8 @@
       /psd web-server url {url} #set the link that will be used for all in game web-server related commands. (not the actual ip that the web-server is hosted on that is controlled by the host server)
       /psd web-server access-port {port} # set the port that will be used when generating links in the chat useful if you are running a reverse-proxy. (leave the same if you have the same port locally and externally)
       /psd web-server port {port} #set the port that your web-server will run on.
+      /psd web-server-auth true #turn on the credentials prompt on the web-server username and password is set in /web-server/credentials.properties. (default user: admin pass: admin)
+      /psd web-server-auth false #turn off the credentials prompt on the web-server username and password is set in /web-server/credentials.properties. (default user: admin pass: admin)
     #psd {player}
       /psd {player} locate #sends the specified player's in-game location.
       /psd {player} ip #sends the specified player's ip address.
