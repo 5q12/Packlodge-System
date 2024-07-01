@@ -13,6 +13,11 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -95,6 +100,11 @@ public class PSDCommand implements CommandExecutor {
                         handleWebServerSettings(sender, args);
                         return true;
                     }
+                } else if (args[0].equalsIgnoreCase("web-server-auth")) {
+                    if (args.length == 2) {
+                        handleWebServerAuthSetting(sender, args);
+                        return true;
+                    }
                 } else if (args[0].equalsIgnoreCase("modpack-link") && args.length == 2) {
                     main.getConfig().set("modpack-link", args[1]);
                     main.saveConfig();
@@ -134,7 +144,7 @@ public class PSDCommand implements CommandExecutor {
                             File infoFile = generatePlayerInfoFile(targetPlayer);
                             String baseUrl = main.getConfig().getString("web-server-url", "http://localhost");
                             int accessPort = main.getConfig().getInt("web-server-access-port", main.getConfig().getInt("web-server-port", 8798));
-                            String url = baseUrl + ":" + accessPort + "/prints/" + targetPlayer.getName() + ".txt";
+                            String url = baseUrl + ":" + accessPort + "/web-server/prints/" + targetPlayer.getName() + ".txt";
                             ComponentBuilder message = new ComponentBuilder("Successfully generated player info file. [CLICK HERE]")
                                 .color(net.md_5.bungee.api.ChatColor.GREEN)
                                 .bold(true)
@@ -194,6 +204,17 @@ public class PSDCommand implements CommandExecutor {
         main.saveConfig();
     }
 
+    private void handleWebServerAuthSetting(CommandSender sender, String[] args) {
+        if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
+            boolean authSetting = Boolean.parseBoolean(args[1]);
+            main.getConfig().set("web-server-authentication", authSetting);
+            main.saveConfig();
+            sender.sendMessage("Web server authentication set to " + authSetting);
+        } else {
+            sender.sendMessage("Invalid value for web-server-auth. Use true or false.");
+        }
+    }
+
     private void sendPlayerLocation(CommandSender sender, Player targetPlayer) {
         Location loc = targetPlayer.getLocation();
         String dimension = targetPlayer.getWorld().getEnvironment().toString();
@@ -218,7 +239,7 @@ public class PSDCommand implements CommandExecutor {
         Location loc = targetPlayer.getLocation();
         String dimension = targetPlayer.getWorld().getEnvironment().toString();
 
-        File printsFolder = new File(main.getDataFolder().getParentFile(), "packlodge-system/prints");
+        File printsFolder = new File(main.getDataFolder().getParentFile(), "packlodge-system/web-server/prints");
         if (!printsFolder.exists()) {
             printsFolder.mkdirs();
         }
@@ -239,12 +260,39 @@ public class PSDCommand implements CommandExecutor {
     }
 
     private String getCountryFromIP(String ip) {
-        // Replace with actual implementation to get country from IP
-        return "Unknown";
+        try {
+            JsonObject json = getIPInfo(ip);
+            return json.get("country_name").getAsString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Unknown";
+        }
     }
 
     private String getRegionFromIP(String ip) {
-        // Replace with actual implementation to get region from IP
-        return "Unknown";
+        try {
+            JsonObject json = getIPInfo(ip);
+            return json.get("region").getAsString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Unknown";
+        }
+    }
+    private JsonObject getIPInfo(String ip) throws IOException {
+        String urlString = "https://ipapi.co/" + ip + "/json/";
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.connect();
+    
+        int responseCode = conn.getResponseCode();
+        if (responseCode != 200) {
+            throw new IOException("Failed to get data from ipapi: HTTP response code " + responseCode);
+        }
+    
+        InputStreamReader reader = new InputStreamReader(conn.getInputStream());
+        JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
+        reader.close();
+        return json;
     }
 }
