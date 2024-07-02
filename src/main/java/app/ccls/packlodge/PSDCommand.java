@@ -110,6 +110,18 @@ public class PSDCommand implements CommandExecutor {
                     main.saveConfig();
                     sender.sendMessage("Modpack download link updated to " + args[1]);
                     return true;
+                } else if (args[0].equalsIgnoreCase("pac")) {
+                    if (args[1].equalsIgnoreCase("enable")) {
+                        main.getConfig().set("pac-command", true);
+                        main.saveConfig();
+                        sender.sendMessage("The /pac command has been enabled.");
+                        return true;
+                    } else if (args[1].equalsIgnoreCase("disable")) {
+                        main.getConfig().set("pac-command", false);
+                        main.saveConfig();
+                        sender.sendMessage("The /pac command has been disabled.");
+                        return true;
+                    }
                 }
             }
 

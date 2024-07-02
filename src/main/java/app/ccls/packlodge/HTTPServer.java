@@ -80,6 +80,7 @@ public class HTTPServer {
         createDirectories();
         int port = plugin.getConfig().getInt("web-server-port", 8798);
         server = HttpServer.create(new InetSocketAddress(port), 0);
+        server.createContext("/web-server/pac.html", new PacFileHandler());
         server.createContext("/web-server/prints", new FileHandler());
         server.setExecutor(null);
         server.start();
@@ -88,7 +89,7 @@ public class HTTPServer {
     private void createDirectories() {
         File webServerDir = new File(plugin.getDataFolder().getParentFile(), "packlodge-system/web-server");
         File printsDir = new File(webServerDir, "prints");
-        
+
         if (!webServerDir.exists()) {
             boolean dirCreated = webServerDir.mkdirs();
             if (dirCreated) {
@@ -97,7 +98,7 @@ public class HTTPServer {
                 logger.warning("Failed to create directory: " + webServerDir.getAbsolutePath());
             }
         }
-        
+
         if (!printsDir.exists()) {
             boolean dirCreated = printsDir.mkdirs();
             if (dirCreated) {
@@ -111,6 +112,64 @@ public class HTTPServer {
     public void stopServer() {
         if (server != null) {
             server.stop(0);
+        }
+    }
+
+    private class PacFileHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (authenticationEnabled && !isAuthenticated(exchange)) {
+                sendUnauthorizedResponse(exchange);
+                return;
+            }
+
+            File file = new File(plugin.getDataFolder().getParentFile(), "packlodge-system/web-server/pac.html");
+
+            if (file.exists() && !file.isDirectory()) {
+                exchange.sendResponseHeaders(200, file.length());
+                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+                     OutputStream os = exchange.getResponseBody()) {
+                    byte[] buffer = new byte[1024];
+                    int count;
+                    while ((count = bis.read(buffer)) != -1) {
+                        os.write(buffer, 0, count);
+                    }
+                }
+            } else {
+                String response = "File not found.";
+                exchange.sendResponseHeaders(404, response.length());
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(response.getBytes());
+                }
+            }
+        }
+
+        private boolean isAuthenticated(HttpExchange exchange) {
+            if (storedUsername == null || storedPassword == null) {
+                return false;
+            }
+
+            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+            if (authHeader != null && authHeader.startsWith("Basic")) {
+                String base64Credentials = authHeader.substring("Basic".length()).trim();
+                String credentials = new String(Base64.getDecoder().decode(base64Credentials), StandardCharsets.UTF_8);
+                String[] values = credentials.split(":", 2);
+                if (values.length == 2) {
+                    String username = values[0];
+                    String password = values[1];
+                    return storedUsername.equals(username) && storedPassword.equals(password);
+                }
+            }
+            return false;
+        }
+
+        private void sendUnauthorizedResponse(HttpExchange exchange) throws IOException {
+            exchange.getResponseHeaders().set("WWW-Authenticate", "Basic realm=\"Packlodge\"");
+            String response = "Unauthorized";
+            exchange.sendResponseHeaders(401, response.length());
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response.getBytes());
+            }
         }
     }
 

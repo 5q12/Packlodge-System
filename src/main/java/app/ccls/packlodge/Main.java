@@ -32,6 +32,7 @@ public final class Main extends JavaPlugin {
     private HashMap<UUID, Long> playTimeMap;
     private LocationCommands locationCommands;
     private ModpackCommand modpackCommand;
+    private PacCommand pacCommand;
 
     @Override
     public void onEnable() {
@@ -45,6 +46,8 @@ public final class Main extends JavaPlugin {
         getLogger().info("permissions-and-commands.yml created or overwritten successfully.");
 
         modpackCommand = new ModpackCommand(this);
+        pacCommand = new PacCommand(this);
+
         File pluginFolder = getDataFolder();
         if (!pluginFolder.exists()) {
             pluginFolder.mkdirs();
@@ -71,6 +74,7 @@ public final class Main extends JavaPlugin {
         getCommand("playtime").setExecutor(new PlayTime(this));
         getCommand("modpack").setExecutor(modpackCommand);
         getCommand("psd").setExecutor(new PSDCommand(this, modpackCommand));
+        getCommand("pac").setExecutor(pacCommand);
 
         copyUpgradeScript();
 

@@ -31,9 +31,10 @@ public class PSDUpdate implements CommandExecutor {
             return true;
         }
 
-        if (args.length == 1) {
+        if (args.length == 1 || (args.length == 2 && args[1].equalsIgnoreCase("-beta"))) {
             if (args[0].equalsIgnoreCase("update")) {
-                updatePlugin(sender);
+                boolean isBeta = args.length == 2 && args[1].equalsIgnoreCase("-beta");
+                updatePlugin(sender, isBeta);
                 return true;
             } else if (args[0].equalsIgnoreCase("upgrade")) {
                 upgradePlugin(sender);
@@ -43,12 +44,15 @@ public class PSDUpdate implements CommandExecutor {
         return false;
     }
 
-    private void updatePlugin(CommandSender sender) {
+    private void updatePlugin(CommandSender sender, boolean isBeta) {
         new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("https://5q12.ccls.icu/packlodge/plugin/downloads/packlodge-system-latest.jar");
+                    String urlString = isBeta 
+                            ? "https://5q12.ccls.icu/packlodge/plugin/downloads/beta/packlodge-system-latest.jar" 
+                            : "https://5q12.ccls.icu/packlodge/plugin/downloads/packlodge-system-latest.jar";
+                    URL url = new URL(urlString);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setDoOutput(true);
@@ -65,9 +69,9 @@ public class PSDUpdate implements CommandExecutor {
                         }
                     }
 
-                    sender.sendMessage("Successfully downloaded the latest packlodge-system version. To confirm update do /psget upgrade. (NOTE: this will stop the server you will need to manually start it again)");
+                    sender.sendMessage("Successfully downloaded the latest " + (isBeta ? "beta " : "") + "packlodge-system version. To confirm update do /psget upgrade. (NOTE: this will stop the server you will need to manually start it again)");
                 } catch (Exception e) {
-                    sender.sendMessage("Failed to update packlodge-system. Please try again later.");
+                    sender.sendMessage("Failed to update " + (isBeta ? "beta " : "") + "packlodge-system. Please try again later.");
                     e.printStackTrace();
                 }
             }
