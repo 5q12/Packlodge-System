@@ -1,4 +1,4 @@
-#--v1.0.0
+#--v1.1.0
 
 #--This is a list of all available permissions--
 
@@ -14,6 +14,8 @@
     pssu.modpack
   #pssu.dev.get allows access to all commands that start with /psget
     pssu.dev.get
+  #pssu.dev.get allows access to all commands that start with /pac
+    pssu.pac
 
 #--This is a list of all available commands--
 
@@ -61,7 +63,15 @@
       /psd {player} ip #sends the specified player's ip address.
       /psd {player} info #sends the specified player's in-game location and ip address.
       /psd {player} info -print #creates a file on the web-server (if enabled) and sends a message to the command executor which they can click that opens a link directly to an auto generated {player}.txt containing in-game and real life geographical information.
-  
+    #psd pac
+      /psd pac enable #enable the pac command 
+      /psd pac disable #disable the pac command 
+
   #psget
     /psget update #downloads the latest plugin version.
+    /psget update -beta #downloads the latest plugin (BETA) version.
     /psget upgrade #this stops the server and deletes the old plugin version (server needs to be started manually after command has run).
+
+  #pac
+    /pac #sends a clickable green link that takes you to the online latest (pac).
+    /pac -print #downloads the latest (pac) from the internet and uploads it to the web-server to host locally on the built in web-server

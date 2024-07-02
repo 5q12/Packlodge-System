@@ -1,4 +1,4 @@
-# -PACKLODGE SYSTEM CONFIGURATION FILE v1.0.0-#
+# -PACKLODGE SYSTEM CONFIGURATION FILE v1.1.0-#
 
 # Modpack command configuration
 modpack-link: https://modpack.example.net # specify the download link to the modpack
@@ -10,3 +10,6 @@ web-server-url: http://localhost # set the link that will be used for all in gam
 web-server-access-port: 9595 # set the port that will be used when generating links in the chat useful if you are running a reverse-proxy with https. (leave the same if you have the same port locally and externally)
 web-server-port: 9595 # set the port that your web-server will run on.
 web-server-authentication: true # Turn on or off the login prompt when going to the web-server. (change the default username and password in /web-server/credentials.properties)
+
+# Permissions and Commands (PAC) configuration
+pac-command: true # enable disable pac command with either true or false.
