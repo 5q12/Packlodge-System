@@ -1,11 +1,15 @@
-# -PACKLODGE SYSTEM CONFIGURATION FILE-#
+# -PACKLODGE SYSTEM CONFIGURATION FILE v1.1.0-#
 
 # Modpack command configuration
 modpack-link: https://modpack.example.net # specify the download link to the modpack
 modpack-command: false # choose to enable or disable the usage of modpack command with false|true
 
 # Web-Server Configuration
-web-server: false # choose to enable or disable the activation and startup of the integrated web-server with false|true (true=web-server on and false of).
+web-server: true # choose to enable or disable the activation and startup of the integrated web-server with false|true (true=web-server on and false of).
 web-server-url: http://localhost # set the link that will be used for all in game web-server related commands. (this is not the actual ip that the web-server is hosted on as that is controlled by the minecraft server)
 web-server-access-port: 9595 # set the port that will be used when generating links in the chat useful if you are running a reverse-proxy with https. (leave the same if you have the same port locally and externally)
 web-server-port: 9595 # set the port that your web-server will run on.
+web-server-authentication: true # Turn on or off the login prompt when going to the web-server. (change the default username and password in /web-server/credentials.properties)
+
+# Permissions and Commands (PAC) configuration
+pac-command: true # enable disable pac command with either true or false.
