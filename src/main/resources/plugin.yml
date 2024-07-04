@@ -1,9 +1,9 @@
 name: packlodge-system
 main: app.ccls.packlodge.Main
-version: 1.1.0
+version: 1.2.0
 api-version: 1.21
 authors: [ 5q12 ]
-website: https://5q12.ccls.icu/packlodge
+website: https://5q12.ccls.icu/packlodge/wiki
 commands:
   seen:
   playtime:
