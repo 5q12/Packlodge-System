@@ -72,6 +72,7 @@ public class PlayTime implements CommandExecutor {
                 showTopPlayTimes(sender, hoursOnly, minutesOnly, secondsOnly);
             } else {
                 String targetUsername = args[0];
+                @SuppressWarnings("deprecation")
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetUsername);
                 if (offlinePlayer.hasPlayedBefore()) {
                     UUID playerUUID = offlinePlayer.getUniqueId();

@@ -48,11 +48,11 @@ public class HTTPServer {
                 properties.load(is);
                 storedUsername = properties.getProperty("username", "admin");
                 storedPassword = properties.getProperty("password", "admin");
-                logger.info("Loaded credentials: " + storedUsername + "/" + storedPassword);
+                logger.info("Loaded credentials from credentials.properties.");
             } catch (IOException e) {
                 e.printStackTrace();
-                storedUsername = "admin"; // Set default username if an error occurs while reading the file
-                storedPassword = "admin"; // Set default password if an error occurs while reading the file
+                storedUsername = "admin";
+                storedPassword = "admin";
             }
         }
     }

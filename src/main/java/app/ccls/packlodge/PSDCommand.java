@@ -41,7 +41,100 @@ public class PSDCommand implements CommandExecutor {
 
         if (command.getName().equalsIgnoreCase("psd")) {
             if (args.length >= 2) {
-                if (args[0].equalsIgnoreCase("location")) {
+                if (args[0].equalsIgnoreCase("locate")) {
+                    Player targetPlayer = Bukkit.getPlayer(args[1]);
+                    if (targetPlayer == null) {
+                        sender.sendMessage("Player not found.");
+                        return true;
+                    }
+                    sendPlayerLocation(sender, targetPlayer);
+                    return true;
+                } else if (args[0].equalsIgnoreCase("ip")) {
+                    Player targetPlayer = Bukkit.getPlayer(args[1]);
+                    if (targetPlayer == null) {
+                        sender.sendMessage("Player not found.");
+                        return true;
+                    }
+                    sendPlayerIP(sender, targetPlayer);
+                    return true;
+                } else if (args[0].equalsIgnoreCase("info")) {
+                    if (args.length == 2) {
+                        Player targetPlayer = Bukkit.getPlayer(args[1]);
+                        if (targetPlayer == null) {
+                            sender.sendMessage("Player not found.");
+                            return true;
+                        }
+                        sendPlayerInfo(sender, targetPlayer);
+                        return true;
+                    } else if (args.length == 3 && args[1].equalsIgnoreCase("-print")) {
+                        Player targetPlayer = Bukkit.getPlayer(args[2]);
+                        if (targetPlayer == null) {
+                            sender.sendMessage("Player not found.");
+                            return true;
+                        }
+
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    @SuppressWarnings("unused")
+                                    File infoFile = generatePlayerInfoFile(targetPlayer);
+                                    String baseUrl = main.getConfig().getString("web-server-url", "http://localhost");
+                                    int accessPort = main.getConfig().getInt("web-server-access-port", main.getConfig().getInt("web-server-port", 8798));
+                                    String url = baseUrl + ":" + accessPort + "/web-server/prints/" + targetPlayer.getName() + ".txt";
+                                    ComponentBuilder message = new ComponentBuilder("Successfully generated player info file. [CLICK HERE]")
+                                        .color(net.md_5.bungee.api.ChatColor.GREEN)
+                                        .bold(true)
+                                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
+                                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to download the player info file")));
+                                    sender.spigot().sendMessage(message.create());
+                                } catch (IOException e) {
+                                    sender.sendMessage("Failed to create player info file.");
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.runTaskAsynchronously(main);
+                        return true;
+                    }
+                } else if (args[0].equalsIgnoreCase("web-server") && args.length == 3 && args[1].equalsIgnoreCase("auth")) {
+                    handleWebServerAuthSetting(sender, args);
+                    return true;
+                } else if (args[0].equalsIgnoreCase("modpack")) {
+                    if (args[1].equalsIgnoreCase("enable")) {
+                        modpackCommand.enableModpackCommand();
+                        sender.sendMessage("The /modpack command has been enabled.");
+                        return true;
+                    } else if (args[1].equalsIgnoreCase("disable")) {
+                        modpackCommand.disableModpackCommand();
+                        sender.sendMessage("The /modpack command has been disabled.");
+                        return true;
+                    }
+                } else if (args[0].equalsIgnoreCase("web-server")) {
+                    if (args.length == 2) {
+                        handleWebServerCommands(sender, args);
+                        return true;
+                    } else if (args.length == 3) {
+                        handleWebServerSettings(sender, args);
+                        return true;
+                    }
+                } else if (args[0].equalsIgnoreCase("modpack-link") && args.length == 2) {
+                    main.getConfig().set("modpack-link", args[1]);
+                    main.saveConfig();
+                    sender.sendMessage("Modpack download link updated to " + args[1]);
+                    return true;
+                } else if (args[0].equalsIgnoreCase("pac")) {
+                    if (args[1].equalsIgnoreCase("enable")) {
+                        main.getConfig().set("pac-command", true);
+                        main.saveConfig();
+                        sender.sendMessage("The /pac command has been enabled.");
+                        return true;
+                    } else if (args[1].equalsIgnoreCase("disable")) {
+                        main.getConfig().set("pac-command", false);
+                        main.saveConfig();
+                        sender.sendMessage("The /pac command has been disabled.");
+                        return true;
+                    }
+                } else if (args[0].equalsIgnoreCase("location")) {
                     if (args.length == 4 && args[2].equalsIgnoreCase("save")) {
                         Player targetPlayer = Bukkit.getPlayer(args[1]);
                         if (targetPlayer == null) {
@@ -82,97 +175,25 @@ public class PSDCommand implements CommandExecutor {
                         });
                         return true;
                     }
-                } else if (args[0].equalsIgnoreCase("modpack")) {
+                } else if (args[0].equalsIgnoreCase("tab-ping")) {
                     if (args[1].equalsIgnoreCase("enable")) {
-                        modpackCommand.enableModpackCommand();
-                        sender.sendMessage("The /modpack command has been enabled.");
+                        main.getConfig().set("tab-ping", true);
+                        main.saveConfig();
+                        sender.sendMessage("Tab ping has been enabled.");
                         return true;
                     } else if (args[1].equalsIgnoreCase("disable")) {
-                        modpackCommand.disableModpackCommand();
-                        sender.sendMessage("The /modpack command has been disabled.");
-                        return true;
-                    }
-                } else if (args[0].equalsIgnoreCase("web-server")) {
-                    if (args.length == 2) {
-                        handleWebServerCommands(sender, args);
-                        return true;
-                    } else if (args.length == 3) {
-                        handleWebServerSettings(sender, args);
-                        return true;
-                    }
-                } else if (args[0].equalsIgnoreCase("web-server-auth")) {
-                    if (args.length == 2) {
-                        handleWebServerAuthSetting(sender, args);
-                        return true;
-                    }
-                } else if (args[0].equalsIgnoreCase("modpack-link") && args.length == 2) {
-                    main.getConfig().set("modpack-link", args[1]);
-                    main.saveConfig();
-                    sender.sendMessage("Modpack download link updated to " + args[1]);
-                    return true;
-                } else if (args[0].equalsIgnoreCase("pac")) {
-                    if (args[1].equalsIgnoreCase("enable")) {
-                        main.getConfig().set("pac-command", true);
+                        main.getConfig().set("tab-ping", false);
                         main.saveConfig();
-                        sender.sendMessage("The /pac command has been enabled.");
+                        sender.sendMessage("Tab ping has been disabled.");
                         return true;
-                    } else if (args[1].equalsIgnoreCase("disable")) {
-                        main.getConfig().set("pac-command", false);
-                        main.saveConfig();
-                        sender.sendMessage("The /pac command has been disabled.");
+                    } else {
+                        sender.sendMessage("Usage: /psd tab-ping <enable|disable>");
                         return true;
                     }
                 }
             }
 
-            if (args.length == 2) {
-                Player targetPlayer = Bukkit.getPlayer(args[0]);
-                if (targetPlayer == null) {
-                    sender.sendMessage("Player not found.");
-                    return true;
-                }
-
-                if (args[1].equalsIgnoreCase("locate")) {
-                    sendPlayerLocation(sender, targetPlayer);
-                    return true;
-                } else if (args[1].equalsIgnoreCase("ip")) {
-                    sendPlayerIP(sender, targetPlayer);
-                    return true;
-                } else if (args[1].equalsIgnoreCase("info")) {
-                    sendPlayerInfo(sender, targetPlayer);
-                    return true;
-                }
-            } else if (args.length == 3 && args[1].equalsIgnoreCase("info") && args[2].equalsIgnoreCase("-print")) {
-                Player targetPlayer = Bukkit.getPlayer(args[0]);
-                if (targetPlayer == null) {
-                    sender.sendMessage("Player not found.");
-                    return true;
-                }
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            File infoFile = generatePlayerInfoFile(targetPlayer);
-                            String baseUrl = main.getConfig().getString("web-server-url", "http://localhost");
-                            int accessPort = main.getConfig().getInt("web-server-access-port", main.getConfig().getInt("web-server-port", 8798));
-                            String url = baseUrl + ":" + accessPort + "/web-server/prints/" + targetPlayer.getName() + ".txt";
-                            ComponentBuilder message = new ComponentBuilder("Successfully generated player info file. [CLICK HERE]")
-                                .color(net.md_5.bungee.api.ChatColor.GREEN)
-                                .bold(true)
-                                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
-                                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to download the player info file")));
-                            sender.spigot().sendMessage(message.create());
-                        } catch (IOException e) {
-                            sender.sendMessage("Failed to create player info file.");
-                            e.printStackTrace();
-                        }
-                    }
-                }.runTaskAsynchronously(main);
-                return true;
-            }
-
-            sender.sendMessage("Usage: /psd modpack <enable|disable> or /psd location <player> [save <location-name>|rename <old-name> <new-name>|list|del <location-name>] or /psd <player> <locate|ip|info> or /psd <player> info -print or /psd modpack-link <link>");
+            sender.sendMessage("Usage: /psd modpack <enable|disable> or /psd location <player> [save <location-name>|rename <old-name> <new-name>|list|del <location-name>] or /psd <locate|ip|info> <player> or /psd info -print <player> or /psd web-server <auth|port|access-port|port|url|enable|disable> <true|false|url|port|access port> or /psd modpack-link <link>");
             return true;
         }
         return false;
@@ -217,13 +238,13 @@ public class PSDCommand implements CommandExecutor {
     }
 
     private void handleWebServerAuthSetting(CommandSender sender, String[] args) {
-        if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
-            boolean authSetting = Boolean.parseBoolean(args[1]);
+        if (args[2].equalsIgnoreCase("true") || args[2].equalsIgnoreCase("false")) {
+            boolean authSetting = Boolean.parseBoolean(args[2]);
             main.getConfig().set("web-server-authentication", authSetting);
             main.saveConfig();
             sender.sendMessage("Web server authentication set to " + authSetting);
         } else {
-            sender.sendMessage("Invalid value for web-server-auth. Use true or false.");
+            sender.sendMessage("Invalid value for web-server auth. Use true or false.");
         }
     }
 
@@ -290,18 +311,19 @@ public class PSDCommand implements CommandExecutor {
             return "Unknown";
         }
     }
+
     private JsonObject getIPInfo(String ip) throws IOException {
         String urlString = "https://ipapi.co/" + ip + "/json/";
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.connect();
-    
+
         int responseCode = conn.getResponseCode();
         if (responseCode != 200) {
             throw new IOException("Failed to get data from ipapi: HTTP response code " + responseCode);
         }
-    
+
         InputStreamReader reader = new InputStreamReader(conn.getInputStream());
         JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
         reader.close();

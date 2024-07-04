@@ -33,12 +33,16 @@ public final class Main extends JavaPlugin {
     private LocationCommands locationCommands;
     private ModpackCommand modpackCommand;
     private PacCommand pacCommand;
+    private VersionCheck versionCheck;
 
     @Override
     public void onEnable() {
         System.out.println("Packlodge System Loaded Successfully");
         this.getCommand("psget").setExecutor(new PSDUpdate(this));
         saveDefaultConfig();
+
+        versionCheck = new VersionCheck(this);
+        versionCheck.checkForUpdates();
 
         File file = new File(getDataFolder(), "permissions-and-commands.yml");
         if (file.exists()) file.delete();
@@ -62,11 +66,15 @@ public final class Main extends JavaPlugin {
             }
         }
 
+        if (getConfig().getBoolean("tab-ping", true)) {
+            new TabListPing(this);
+        }
+
         playerDataConfig = getConfig();
         playTimeMap = new HashMap<>();
-
         playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
 
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, versionCheck), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         locationCommands = new LocationCommands(this);
         getCommand("location").setExecutor(locationCommands);
