@@ -1,4 +1,4 @@
-(Note: For some reason, the source zip and tar archives are being registered as a virus when downloading on certain browsers (primarily Windows). This may be because of the shell or bat scripts. Not sure, I will try to fix this issue as soon as possible.)
+**(Note: For some reason, the source zip and tar archives are being registered as a virus when downloading on certain browsers (primarily Windows). This may be because of the shell or bat scripts. Not sure, I will try to fix this issue as soon as possible.)**
 
 Packlodge System is a comprehensive plugin designed to enhance the multiplayer experience in Minecraft servers. With a focus on convenience and functionality, this plugin introduces a range of features aimed at server administrators and players alike. From tracking player playtime to managing player locations, and even facilitating modpack distribution, Packlodge Utilities offers a versatile set of tools to streamline server management and gameplay interaction.
 
