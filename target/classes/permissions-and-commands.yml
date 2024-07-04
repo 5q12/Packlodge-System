@@ -1,4 +1,4 @@
-#--v1.1.0
+#--v1.2.0
 
 #--This is a list of all available permissions--
 
@@ -56,16 +56,19 @@
       /psd web-server url {url} #set the link that will be used for all in game web-server related commands. (not the actual ip that the web-server is hosted on that is controlled by the host server)
       /psd web-server access-port {port} # set the port that will be used when generating links in the chat useful if you are running a reverse-proxy. (leave the same if you have the same port locally and externally)
       /psd web-server port {port} #set the port that your web-server will run on.
-      /psd web-server-auth true #turn on the credentials prompt on the web-server username and password is set in /web-server/credentials.properties. (default user: admin pass: admin)
-      /psd web-server-auth false #turn off the credentials prompt on the web-server username and password is set in /web-server/credentials.properties. (default user: admin pass: admin)
+      /psd web-server auth true #turn on the credentials prompt on the web-server username and password is set in /web-server/credentials.properties. (default user: admin pass: admin)
+      /psd web-server auth false #turn off the credentials prompt on the web-server username and password is set in /web-server/credentials.properties. (default user: admin pass: admin)
     #psd {player}
-      /psd {player} locate #sends the specified player's in-game location.
-      /psd {player} ip #sends the specified player's ip address.
-      /psd {player} info #sends the specified player's in-game location and ip address.
-      /psd {player} info -print #creates a file on the web-server (if enabled) and sends a message to the command executor which they can click that opens a link directly to an auto generated {player}.txt containing in-game and real life geographical information.
+      /psd locate {player} #sends the specified player's in-game location.
+      /psd ip {player} #sends the specified player's ip address.
+      /psd info {player} #sends the specified player's in-game location and ip address.
+      /psd info -print {player} #creates a file on the web-server (if enabled) and sends a message to the command executor which they can click that opens a link directly to an auto generated {player}.txt containing in-game and real life geographical information.
     #psd pac
       /psd pac enable #enable the pac command 
-      /psd pac disable #disable the pac command 
+      /psd pac disable #disable the pac command
+    #psd tab-ping
+      /psd tab-ping enable #sets the tab-ping attribute to true in the config.yml
+      /psd tab-ping disable #sets the tab-ping attribute to false in the config.yml
 
   #psget
     /psget update #downloads the latest plugin version.
